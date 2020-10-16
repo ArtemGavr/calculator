@@ -17,7 +17,6 @@ function toDecimal(number, baseFrom) {
     return res;
 }
 
-// var X = prompt("Choose your number");
 
 var A = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 function fromDecimal(number, base) {
@@ -72,6 +71,7 @@ function fromTwoto (number, base) {
     var eightDigits =["000", '001', '010', '011', '100', '101', '110' ,'111'];
     let sixteen = ['0000', '0001', '0010', '0011', '0100', '0101', '0110', '0111', '1000', '1001', '1010', '1011', '1100', '1101', '1110', '1111' ]
     if (base == 8) {
+    
         if (number.length % 3 == 1){
             number = '00' + number;
         }
@@ -157,9 +157,14 @@ function subt(num1, num2, base) {
     num1 = num1.toString();
     num2 = num2.toString();
     let Z = [];
-    while (num1.length < num2.length) {
-        num1 = '0' + num1;
+    let neg = false;
+    if (num1.length < num2.length){
+        neg=true;
+        let Snum = num1;
+        num1=num2;
+        num2=Snum;
     }
+    
     while (num2.length < num1.length) {
         num2 = '0' + num2;
     }
@@ -189,7 +194,11 @@ function subt(num1, num2, base) {
             break;
         }
     }
-    return Z.join('').substr(a);
+    let ans =Z.join('').substr(a);
+    if (neg){
+        return '-'+ans;
+    }
+    return ans;
 
 }
 
@@ -235,6 +244,23 @@ function mult(num1, num2, base) {
     return ans.substr(a);
 }
 
+function divide(num1, num2, base){
+    let res = 0;
+    let ans = ''
+    while (num1[0] != '0'){
+        res++;
+        num1 = subt(num1, num2, base);
+        alert(num1)
+        if (num1[0] == '-'){
+            res--;
+            ans = res.toString() + '!!!! ' + num1.substr(1)
+            return ans
+        }
+    }
+
+    return res
+}
+
 function valueOfSymbol(symbol) {
     let symbolCharCode = symbol.charCodeAt(0);
     if (symbolCharCode >= 48 && symbolCharCode <= 57)
@@ -259,13 +285,100 @@ function valueToSymbol(value) {
     return ''
 }
 
-console.log(mult('A', 'B', 16));
 
 
 
+let input=prompt(`Enter the expression`);
 
+let arr = input.split(" ");
 
+let error = function(){alert('Wrong input!!!')}
 
+let bases_arr = [2, 8, 10, 16];
+let oper_arr = ['+', '-', '/', '*'];
+
+if (arr.length == 2 ){
+    let base = Number(arr[0]);
+    if (bases_arr.indexOf(base) < 0) {
+        error()
+    } else {
+        let answer=''
+        if (base == 2){
+        if (arr[1].indexOf('.') > 0) {
+            let arr2 = arr[1].split('.')
+            answer = '8: ' + fromTwoto(arr2[0], 8)+'.'+fromTwoto(arr2[1], 8) + ' 10: ' + toDecimal(arr2[0] , 2) + '.' +toDecimal(arr2[1] , 2) +' 16: ' + fromTwoto(arr2[0], 16)+'.'+fromTwoto(arr2[1], 16)
+            alert(answer)
+        } else{
+            answer = '8: ' + fromTwoto(arr[1], 8) + ' 10: ' + toDecimal(arr[1] , 2) + ' 16: ' + fromTwoto(arr[1], 16)
+            alert(answer)
+        }
+        }
+
+        if (base == 8){
+            if (arr[1].indexOf('.') > 0) {
+                let arr2 = arr[1].split('.')
+                answer = '2: ' + toTwoBase(arr2[0], 8) +'.'+ toTwoBase(arr2[1], 8) + ' 10: ' + toDecimal(arr2[0] , 8) + '.' + toDecimal(arr2[1] , 8)+ ' 16: ' + fromTwoto(toTwoBase(arr2[0], 8), 16) + '.' +  fromTwoto(toTwoBase(arr2[1], 8), 16)
+                alert(answer) 
+            } else {
+            answer = '2: ' + toTwoBase(arr[1], 8) + ' 10: ' + toDecimal(arr[1] , 8) + ' 16: ' + fromTwoto(toTwoBase(arr[1], 8), 16)
+            alert(answer)
+            }
+        }
+
+        if (base == 10){
+            if (arr[1].indexOf('.') > 0) {
+                let arr2 = arr[1].split('.')
+                answer = '2: ' + fromDecimal(arr2[0], 2) +'.'+ fromDecimal(arr2[1], 2) + ' 8: ' + fromDecimal(arr2[0], 8) +'.'+ fromDecimal(arr2[1], 8)+ ' 16: ' + fromDecimal(arr2[0], 16) +'.'+ fromDecimal(arr2[1], 16)
+                alert(answer) 
+            } else {
+            answer = '2: ' + fromDecimal(arr[1], 2) + ' 8: ' + fromDecimal(arr[1], 8) + ' 16: ' + fromDecimal(arr[1], 16)
+            alert(answer)
+            }
+        }
+
+        if (base == 16){
+            if (arr[1].indexOf('.') > 0) {
+                let arr2 = arr[1].split('.')
+                answer = '2: ' + toTwoBase(arr2[0], 16) +'.'+ toTwoBase(arr2[1], 16) + ' 10: ' + toDecimal(arr2[0] , 16) + '.' + toDecimal(arr2[1] , 16)+ ' 8: ' + fromTwoto(toTwoBase(arr2[0], 16), 8) + '.' +  fromTwoto(toTwoBase(arr2[1], 16), 8)
+                alert(answer) 
+            } else {
+            answer = '2: ' + toTwoBase(arr[1], 16) + ' 8: ' + fromTwoto(toTwoBase(arr[1], 16), 8) + ' 10: ' + toDecimal(arr[1] , 16) 
+            alert(answer)
+            }
+        }
+    }
+} else if(arr.length == 4){
+    let base = Number(arr[0]);
+
+    if (bases_arr.indexOf(base) < 0) {
+        error()
+    } else if(oper_arr.indexOf(arr[2]) < 0){
+        error()
+    } 
+    else {
+        let answer=''
+        if (arr[2] == '+'){
+            answer = sum(arr[1], arr[3], base)
+            alert(answer)
+        }
+
+        if (arr[2] == '-'){
+            answer = subt(arr[1], arr[3], base)           
+             alert(answer)
+        }
+
+        if (arr[2] == '/'){
+            answer = '2: ' + fromDecimal(arr[1], 2) + ' 8: ' + fromDecimal(arr[1], 8) + ' 16: ' + fromDecimal(arr[1], 16)
+            alert(answer)
+        }
+
+        if (arr[2] == '*'){
+            answer = mult(arr[1], arr[3], base)
+            alert(answer)
+        }
+    }
+} else error();
+ 
 
 
 
